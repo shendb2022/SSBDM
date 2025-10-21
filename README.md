@@ -1,2 +1,2 @@
 # SSBDM
-The code will be released upon the acceptance of this paper.
+The code will be released as soon as the paper is accepted.
