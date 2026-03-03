@@ -16,7 +16,7 @@ X = data_matrix';
 
 % load Sandiego_A20
 gamma = 20;
-load(cell2mat(["Sandiego", '_newA2',gamma, '.mat']));
+load(cell2mat(["Sandiego", '_A',gamma, '.mat']));
 A = double(A);
 % PCA is applied to obtain the main information for superpixel segmentation
 n_components = 10;
