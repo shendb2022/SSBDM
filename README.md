@@ -10,15 +10,15 @@ numpy 1.26.4
 Matlab R2020b
 
 ## Dataset
-San Diego 
+San Diego I
 
 ## Run
-"main_sandiego.m"
-For a new dataset, you should run the "amk-atgp.py" to obtain the background dictionary at first.
+- You can directly run "main_sandiego.m" to test on the San Diego I dataset.
+- For a new dataset, you should run the "amk-atgp.py" to obtain the background dictionary at first.
 
 ## Citation
 If you use this code, please cite:
-...
+```bibtex
 @ARTICLE{SSBDM2026,
   author={Shen, Dunbin and Kong, Wenfeng and Xiao, Xiwen and Liu, Jianjun and Du, Zhenrong and Zhao, Wenda and Ma, Xiaorui and Wang, Hongyu},
   journal={IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing}, 
@@ -29,3 +29,4 @@ If you use this code, please cite:
   pages={},
   doi={}
 }
+```
