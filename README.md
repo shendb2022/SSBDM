@@ -16,8 +16,9 @@ Matlab R2020b
 San Diego I
 
 ## Run
-- You can directly run "main_sandiego.m" to test on the San Diego I dataset.
-- For a new dataset, you should run the "amk-atgp.py" to obtain the background dictionary at first.
+You can directly run "main_sandiego.m" to test on the San Diego I dataset.
+
+For a new dataset, you should run the "amk-atgp.py" to obtain the background dictionary at first.
 
 ## Citation
 If you use this code, please cite:
