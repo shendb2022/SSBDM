@@ -5,8 +5,11 @@ The implementation of the paper "SSBDM: A Spectral–Spatial Bilinear Decomposit
 
 ## Requirements
 Python 3.10  
+
 scikit-learn 1.5.0
+
 numpy 1.26.4
+
 Matlab R2020b
 
 ## Dataset
