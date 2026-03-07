@@ -30,7 +30,7 @@ If you use this code, please cite:
   year={2026},
   volume={},
   number={},
-  pages={},
-  doi={}
+  pages={1-20},
+  doi={10.1109/JSTARS.2026.3670876}
 }
 ```
