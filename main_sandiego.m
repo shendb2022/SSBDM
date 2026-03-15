@@ -1,6 +1,7 @@
 clear all;  clc; close all
 addpath("dictionary");
-load("Sandiego.mat");
+data_name = "Sandiego";  % For better performance, you can tune the parameters alpha and beta in Line 89 and 90
+load(data_name);
 % mex -setup cpp
 % mex hybridseg.cpp
 % maxNumCompThreads(1);
@@ -14,9 +15,8 @@ data = hyperNormalize(data);
 data_matrix = reshape(data, nrows * ncols, nbands);
 X = data_matrix';
 
-% load Sandiego_A20
-gamma = 20;
-load(cell2mat(["Sandiego", '_A',gamma, '.mat']));
+% load background dictionary
+load(cell2mat([data_name, '_bg_dictionary.mat']));
 A = double(A);
 % PCA is applied to obtain the main information for superpixel segmentation
 n_components = 10;
@@ -87,7 +87,7 @@ opt_beta = 0;
 % for alpha = [0 1e-6 1e-5 1e-4 1e-3 1e-2 1e-1 1e0 1e1 1e2 1e3]
 %     for beta = [0 1e-6 1e-5 1e-4 1e-3 1e-2 1e-1 1e0 1e1 1e2 1e3]
 alpha = 1e-2; % 1e-3
-beta = 0.1; % 0.1
+beta = 1e-1; % 0.1
 mu = 1e-1;
 iter = 1e2;
 episilon = 1e-3;

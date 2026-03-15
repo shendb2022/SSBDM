@@ -215,12 +215,14 @@ if __name__ == '__main__':
         t = ts_generation(data, gt, 7)
     X = np.reshape(data, [-1, L], order='F').T
     batch_size = 100
-    m = 20 # the number of background atoms which can be tuned
-    gamma = 1e-4
+    m = 10  # the size of background dictionary which can be tuned
+    gamma = 1e-4  # the parameter of Gaussian kernel
     kernel_funcs = [linear_kernel, rbf_kernel, poly_kernel]
     param_list = [{}, {'gamma': gamma}, {'gamma': 1.0, 'degree': 2, 'coef0': 1.0}]
     Ab, ind = ATGP_adaptive_kernel_unified(X, t, m, kernel_funcs, param_list, use_batch=True,
                                            batch_size=batch_size, verbose=False)
     time_end = time.perf_counter()
-    sio.savemat('dictionary/%s_A%s.mat' % (da, m), {'A': Ab})
+    sio.savemat('dictionary/%s_bg_dictionary.mat' % da, {'A': Ab})
     print('time is %ss' % (time_end - time_start))
+
+    sio.savemat('%s.mat' % da, {'data': data, 'groundtruth': gt, 'd': t})
