@@ -215,7 +215,7 @@ if __name__ == '__main__':
         t = ts_generation(data, gt, 7)
     X = np.reshape(data, [-1, L], order='F').T
     batch_size = 100
-    m = 10  # the size of background dictionary which can be tuned
+    m = 20  # the size of background dictionary which can be tuned
     gamma = 1e-4  # the parameter of Gaussian kernel
     kernel_funcs = [linear_kernel, rbf_kernel, poly_kernel]
     param_list = [{}, {'gamma': gamma}, {'gamma': 1.0, 'degree': 2, 'coef0': 1.0}]
