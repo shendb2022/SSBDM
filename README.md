@@ -23,14 +23,14 @@ For a new dataset, you should run the "amk-atgp.py" to obtain the background dic
 ## Citation
 If you use this code, please cite:
 ```bibtex
-@ARTICLE{SSBDM2026,
-  author={Shen, Dunbin and Kong, Wenfeng and Xiao, Xiwen and Liu, Jianjun and Du, Zhenrong and Zhao, Wenda and Ma, Xiaorui and Wang, Hongyu},
+@ARTICLE{11422343,
+  author={Shen, Dunbin and Kong, Wenfeng and Xiao, Xiwen and Liu, Jianjun and Du, Zhenrong and Ma, Xiaorui and Zhao, Wenda and Wang, Hongyu},
   journal={IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing}, 
-  title={SSBDM: A Spectral–Spatial Bilinear Decomposition Model with Adaptive Multi-Kernel Dictionary for Hyperspectral Target Detection}, 
+  title={SSBDM: A Spectral–Spatial Bilinear Decomposition Model With Adaptive Multikernel Dictionary for Hyperspectral Target Detection}, 
   year={2026},
-  volume={},
+  volume={19},
   number={},
-  pages={1-20},
-  doi={10.1109/JSTARS.2026.3670876}
-}
+  pages={9347-9365},
+  keywords={Kernel;Adaptation models;Feature extraction;Context modeling;Dictionaries;Detectors;Robustness;Object detection;Hyperspectral imaging;Atoms;Bilinear mixing;hyperspectral image (HSI);multikernel learning;spectral–spatial regularization;target detection},
+  doi={10.1109/JSTARS.2026.3670876}}
 ```
