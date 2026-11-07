@@ -66,6 +66,6 @@ if __name__ == '__main__':
     main('Sandiego', 20, 0.01, 0.1, 0.01)
     # main('Sandiego2', 10, 0.1, 0.01, 0.01)
     # main('Cuprite', 10, 0.01, 0.1, 0.008)
-    # main('xuzhou2_hsi', 10, 0.001, 0.01, 0.002)
+    # main('Xuzhou', 10, 0.001, 0.01, 0.002)
     end = time.perf_counter()
     print('time is %s' % (end - start))
