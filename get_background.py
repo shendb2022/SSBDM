@@ -1,7 +1,11 @@
+"""Load or regenerate the adaptive multi-kernel ATGP background dictionary.
+
+The AMK/ATGP functions preserve upstream amk_atgp.py equations and seed dtype.
+Generation never writes back to the input hyperspectral dataset.
+"""
+from pathlib import Path
 import numpy as np
 import scipy.io as sio
-import time
-from ts_generation import ts_generation
 
 
 def standard(X):
@@ -197,32 +201,51 @@ def ATGP_adaptive_kernel_unified(X, d, n, kernel_funcs, param_list,
     return U[:, 1:], indices
 
 
-if __name__ == '__main__':
-    time_start = time.perf_counter()
-    da = 'Sandiego'
-    start = time.perf_counter()
-    mat = sio.loadmat('%s.mat' % da)
-    data = mat['data']
-    H, W, L = data.shape
-    gt = mat.get('groundtruth', mat.get('map', None))
-    if gt is None:
-        raise KeyError("Expect 'groundtruth' or 'map' in the .mat file.")
-    data[data < 0] = 0
-    data = standard(data)
-    try:
-        t = mat['d']
-    except:
-        t = ts_generation(data, gt, 7)
-    X = np.reshape(data, [-1, L], order='F').T
-    batch_size = 100
-    m = 20  # the size of background dictionary which can be tuned
-    gamma = 1e-4  # the parameter of Gaussian kernel
-    kernel_funcs = [linear_kernel, rbf_kernel, poly_kernel]
-    param_list = [{}, {'gamma': gamma}, {'gamma': 1.0, 'degree': 2, 'coef0': 1.0}]
-    Ab, ind = ATGP_adaptive_kernel_unified(X, t, m, kernel_funcs, param_list, use_batch=True,
-                                           batch_size=batch_size, verbose=False)
-    time_end = time.perf_counter()
-    sio.savemat('dictionary/%s_bg_dictionary.mat' % da, {'A': Ab})
-    print('time is %ss' % (time_end - time_start))
+def generate_background(x, target, n_atoms=20, gamma=1e-4, batch_size=100):
+    x = np.asarray(x, dtype=np.float32)
+    target = np.asarray(target).reshape(-1, 1)
+    if x.ndim != 2 or target.shape != (x.shape[0], 1):
+        raise ValueError('X and target must have matching spectral dimensions')
+    if not 1 <= n_atoms <= x.shape[1] or batch_size < 1 or gamma <= 0:
+        raise ValueError('invalid background atom count, batch size or kernel gamma')
+    if not np.isfinite(x).all() or not np.isfinite(target).all():
+        raise ValueError('X and target must be finite')
+    kernels = [linear_kernel, rbf_kernel, poly_kernel]
+    parameters = [{}, {'gamma': gamma}, {'gamma': 1., 'degree': 2, 'coef0': 1.}]
+    return ATGP_adaptive_kernel_unified(x, target, n_atoms, kernels, parameters,
+                                        use_batch=True, batch_size=batch_size, verbose=False)
 
-    sio.savemat('%s.mat' % da, {'data': data, 'groundtruth': gt, 'd': t})
+
+def get_background(x, target, path=None, *, n_atoms=20, gamma=1e-4, batch_size=100):
+    """Load a cached dictionary; generate and cache it if the file is missing."""
+    path = Path(path) if path is not None else None
+    if path is not None and path.exists():
+        cached = sio.loadmat(path)
+        a = np.asarray(cached['A'])
+        if 'dictionary_seed' in cached and not np.array_equal(cached['dictionary_seed'], target):
+            raise ValueError(
+                f'dictionary seed changed for {path}; use another background_path or regenerate this cache')
+        if 'kernel_gamma' in cached and float(cached['kernel_gamma'].item()) != gamma:
+            raise ValueError(
+                f'dictionary kernel gamma changed for {path}; use another background_path or regenerate this cache')
+        if a.shape != (x.shape[0], n_atoms) or not np.isfinite(a).all():
+            raise ValueError(
+                f'expected a finite background dictionary of shape {(x.shape[0], n_atoms)}, got {a.shape}; choose a matching atom count or another background_path')
+        print(f'Loaded background dictionary: {path}', flush=True)
+        return a, dict(mode='load', path=str(path.resolve()), atoms=n_atoms,
+                       seed_source=str(cached[
+                                           'seed_source'].item()) if 'seed_source' in cached else 'legacy cache without seed metadata')
+    print(f'Generating background dictionary ({n_atoms} atoms)...', flush=True)
+    a, indices = generate_background(x, target, n_atoms, gamma, batch_size)
+    info = dict(mode='generate', atoms=n_atoms, kernel_gamma=gamma, batch_size=batch_size,
+                pixel_indices=[int(i) for i in indices],
+                seed_dtype=str(np.asarray(target).dtype), seed_source='ts_generation type7')
+    if path is not None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        sio.savemat(path, dict(A=a, pixel_indices=np.asarray(indices),
+                               dictionary_seed=np.asarray(target), kernel_gamma=gamma,
+                               seed_source='ts_generation type7',
+                               generation_version='type7-v1'), do_compression=True)
+        info['path'] = str(path.resolve())
+        print(f'Saved background dictionary: {path}', flush=True)
+    return a, info
